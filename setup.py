@@ -24,9 +24,9 @@ LINKER_FLAGS = ["-lgomp"]
 MATH_LINKER_FLAGS = ["-lblas", "-llapack"]
 
 # UNCOMMENT TO FORCE LINKING TO MKL with GNU compilers:
-# if mkl_exists(verbose=True):
-#     LINKER_FLAGS = ["-lgomp", " -lpthread", "-lm", "-ldl"]
-#     MATH_LINKER_FLAGS = ["-L${MKLROOT}/lib/intel64", "-lmkl_rt"]
+if mkl_exists(verbose=True):
+    LINKER_FLAGS = ["-lgomp", " -lpthread", "-lm", "-ldl"]
+    MATH_LINKER_FLAGS = ["-L${MKLROOT}/lib/intel64", "-lmkl_rt"]
 
 # For clang without OpenMP: (i.e. most Apple/mac system)
 if sys.platform == "darwin" and all(["gnu" not in arg for arg in sys.argv]):
@@ -38,6 +38,8 @@ if sys.platform == "darwin" and all(["gnu" not in arg for arg in sys.argv]):
 # Intel
 if any(["intelem" in arg for arg in sys.argv]):
     COMPILER_FLAGS = ["-xHost", "-O3", "-axAVX", "-qopenmp"]
+    # ICC 17+ doesn't work with stdlib
+    COMPILER_FLAGS += ['-D__PURE_INTEL_C99_HEADERS__', '-D_Float32=float', '-D_Float64=double', '-D_Float128="long double"', '-D_Float32x=_Float64', '-D_Float64x=_Float128']
     LINKER_FLAGS = ["-liomp5", " -lpthread", "-lm", "-ldl"]
     MATH_LINKER_FLAGS = ["-L${MKLROOT}/lib/intel64", "-lmkl_rt"]
 
