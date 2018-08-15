@@ -7,23 +7,23 @@ FORT=mpiifort
 OBJDIR=build
 SRCDIR=../fchl
 
-FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90
+FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 ffchl_reader.f90 ffchl_wrapper.f90 ffchl_program.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 all: ${TARGET}
 
 ${TARGET}: ${FOBJECTS}
-	${FORT} ${FOBJECTS} -o $@
+	${FORT} ${FOBJECTS} -module ${OBJDIR} -o $@
 
 ${OBJDIR}/%.o: ${SRCDIR}/%.f90
-	${FORT} -c ${FLAGS} $< -o $@
+	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
 
 ${OBJDIR}/%.o: %.f90
-	${FORT} -c ${FLAGS} $< -o $@
+	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
 
 directories:
 	mkdir -p ${BUILD}
 
 clean:
-	rm build/*.o
+	rm build/*.o build/*.mod
 
