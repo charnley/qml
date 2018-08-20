@@ -10,6 +10,8 @@ SRCDIR=../fchl
 FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 ffchl_reader.f90 ffchl_wrapper.f90 ffchl_program.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
+.PHONY: test
+
 all: ${TARGET}
 
 ${TARGET}: ${FOBJECTS}
@@ -20,6 +22,10 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.f90
 
 ${OBJDIR}/%.o: %.f90
 	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
+
+test:
+	./qmlexe
+	./check.py test_ffchl_kernel data/qm7_fchl_kernel
 
 directories:
 	mkdir -p ${BUILD}

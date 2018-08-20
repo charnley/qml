@@ -4,4 +4,4 @@ build/*
 *.o
 
 qmlexe
-
+test_*
