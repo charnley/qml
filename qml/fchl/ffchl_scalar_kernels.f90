@@ -20,6 +20,12 @@
 ! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ! SOFTWARE.
 
+module ffchl_scalar_kernels
+
+    implicit none
+
+contains
+
 
 subroutine fget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
        & sigmas, nm1, nm2, nsigmas, &
@@ -109,6 +115,12 @@ subroutine fget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
 
     integer :: maxneigh1
     integer :: maxneigh2
+
+    write(*,*) "JCK x1 inside shape", shape(x1)
+
+    write(*,*) "JCK nneigh1 shape inside", shape(nneigh1)
+    write(*,*) "JCK wat"
+    write(*,*) "JCK nneigh1 wat", nneigh1(1,1)
 
     maxneigh1 = maxval(nneigh1)
     maxneigh2 = maxval(nneigh2)
@@ -1337,3 +1349,5 @@ subroutine fget_atomic_symmetric_kernels_fchl(x1, nneigh1, &
     deallocate(sinp1)
 
 end subroutine fget_atomic_symmetric_kernels_fchl
+
+end module ffchl_scalar_kernels
