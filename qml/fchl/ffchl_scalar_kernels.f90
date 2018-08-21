@@ -116,11 +116,6 @@ subroutine fget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
     integer :: maxneigh1
     integer :: maxneigh2
 
-    write(*,*) "JCK x1 inside shape", shape(x1)
-
-    write(*,*) "JCK nneigh1 shape inside", shape(nneigh1)
-    write(*,*) "JCK wat"
-    write(*,*) "JCK nneigh1 wat", nneigh1(1,1)
 
     maxneigh1 = maxval(nneigh1)
     maxneigh2 = maxval(nneigh2)
