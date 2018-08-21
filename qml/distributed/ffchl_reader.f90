@@ -15,8 +15,7 @@ subroutine fread_fchl_representations(fname, ni, nj, nk, nl, representations)
     integer :: ni, nj, nk, nl
     integer :: i,j,k,l
 
-
-    write(*,*) shape(representations)
+    ! write(*,*) shape(representations)
 
     open(21, file=fname, form='unformatted')
     read(21) representations
@@ -26,7 +25,7 @@ end subroutine
 
 
 subroutine fread_fchl_args(max_size, max_neighbors, &
-       & sigmas, nm1, nm2, nsigmas, &
+       & sigmas, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power)
 
@@ -35,15 +34,11 @@ subroutine fread_fchl_args(max_size, max_neighbors, &
     implicit none
 
     !jck
-    integer, intent(in) :: max_size
-    integer, intent(in) :: max_neighbors
+    integer, intent(out) :: max_size
+    integer, intent(out) :: max_neighbors
 
     ! Sigma in the Gaussian kernel
-    double precision, dimension(:), intent(out) :: sigmas
-
-    ! Number of molecules
-    integer, intent(in) :: nm1
-    integer, intent(in) :: nm2
+    double precision, dimension(:), allocatable, intent(out) :: sigmas
 
     ! Number of sigmas
     integer :: nsigmas
@@ -59,9 +54,16 @@ subroutine fread_fchl_args(max_size, max_neighbors, &
     double precision :: distance_scale
     double precision :: angular_scale
 
-    double precision, dimension(:,:), intent(out) :: pd
+    double precision, allocatable, dimension(:,:), intent(out) :: pd
 
     logical :: alchemy
+
+    max_size = 23
+    max_neighbors = 23
+
+    allocate(sigmas(nsigmas))
+
+    allocate(pd(100,100))
 
     call fread_logical("data/qm7_fchl_doalchemy", alchemy)
 

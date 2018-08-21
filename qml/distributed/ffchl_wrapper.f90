@@ -102,13 +102,23 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     integer :: idx_nneigh
     ! end collection sizes
 
+
+    ! size of collections
+    nm1 = size(collection_x, 1)
+    nm2 = size(collection_y, 1)
+
     ! hardcode fchl sizes
-    nm1 = 11 ! TODO read from dimension of collection
-    nm2 = nm1
-    max_size = 23 ! TODO read from broadcast / files
-    max_neighbors = 23
     nsigmas = 1
     ! end hardcode fchl sizes
+
+
+    ! read fchl args
+    ! TODO Broadcast this stuff
+    call fread_fchl_args(max_size, max_neighbors, &
+       & sigmas, nsigmas, &
+       & t_width, d_width, cut_start, cut_distance, order, pd, &
+       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power)
+
 
     ! collection index
     collection_size = max_size*5*max_neighbors + 1 + max_size
@@ -121,21 +131,12 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     allocate(x1(nm1, max_size, 5, max_neighbors))
     allocate(x2(nm1, max_size, 5, max_neighbors))
 
-    allocate(sigmas(nsigmas))
     allocate(n1(nm1))
     allocate(n2(nm2))
+
     allocate(nneigh1(nm1, max_size))
     allocate(nneigh2(nm2, max_size))
-
-    allocate(pd(100,100))
     ! end allocate fchl
-
-    ! read fchl args
-    ! TODO Broadcast this stuff
-    call fread_fchl_args(max_size, max_neighbors, &
-       & sigmas, nm1, nm2, nsigmas, &
-       & t_width, d_width, cut_start, cut_distance, order, pd, &
-       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power)
 
 
     ! Reshape collection to representations
@@ -148,12 +149,13 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     n1 = collection_x(:,idx_n)
     n2 = collection_y(:,idx_n)
 
-    ! call the kernel function
-    ! call fjckget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
+
+    ! call the ffchl kernel function
     call fget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
        & sigmas, nm1, nm2, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, kernel)
+
 
     deallocate(x1)
     deallocate(x2)
