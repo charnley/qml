@@ -4,53 +4,108 @@ module ffchl_wrapper
 
 contains
 
-subroutine collection2representation()
+subroutine collection2representation( &
+    collection, &
+    xx, nx, nneighx, &
+    max_size, max_neighbors)
+
+    !
+    ! Translate representations to global 2d collection
+    !
+    !       x1                       n1        nneigh1
+    ! max_size*5*max_neighbors  +    1    +    max_size
+    !
 
     implicit none
 
-    ! allocate(representations(nm1, max_size, 5, max_size))
-    ! call fread_fchl_representations("data/qm7_fchl_representations", nm1, max_size, 5, max_size, representations)
+    ! fchl collection of representations
+    double precision, dimension(:,:), intent(in) :: collection
     !
-    ! allocate(n1(nm1))
-    ! allocate(n2(nm2))
-    ! call fread_1d_integer("data/qm7_fchl_n1", nm1, n1)
-    ! call fread_1d_integer("data/qm7_fchl_n1", nm2, n2)
-    !
-    ! allocate(nneigh1(nm1, max_size))
-    ! allocate(nneigh2(nm2, max_size))
-    ! call fread_2d_integer("data/qm7_fchl_neighbors1", nm1, max_size, nneigh1)
-    ! call fread_2d_integer("data/qm7_fchl_neighbors2", nm2, max_size, nneigh2)
-    !
-    ! ! Translate representations to global 2d collection
-    ! !
-    ! !       x1                       n1        nneigh1
-    ! ! max_size*5*max_neighbors  +    1    +    max_size
-    ! !
-    !
-    ! collection_size = max_size*5*max_neighbors + 1 + max_size
-    ! idx_x = 1
-    ! idx_n = idx_x + max_size*5*max_neighbors
-    ! idx_nneigh = idx_n + 1
-    !
-    ! allocate(collection_x( nm1, collection_size ))
-    ! collection_x = 0.0d0
-    ! collection_x(:,idx_x:idx_n-1) = reshape(source=representations, shape=[nm1, max_size*5*max_neighbors])
-    ! collection_x(:,idx_n) = n1
-    ! collection_x(:,idx_nneigh:collection_size) = nneigh1
-    !
-    ! allocate(collection_y( nm2, collection_size ))
-    ! collection_y = 0.0d0
-    ! collection_y(:,idx_x:idx_n-1) = reshape(source=representations, shape=[nm2, max_size*5*max_neighbors])
-    ! collection_y(:,idx_n) = n2
-    ! collection_y(:,idx_nneigh:collection_size) = nneigh2
+
+    ! fchl args
+    double precision, dimension(:,:,:,:), intent(out) :: xx
+    integer, dimension(:), intent(out) :: nx
+    integer, dimension(:,:), intent(out) :: nneighx
+
+    integer :: nmx
+    integer, intent(in) :: max_size
+    integer, intent(in) :: max_neighbors
+    ! end fchl args
+
+    ! collection sizes
+    integer :: collection_size
+    integer :: idx_x
+    integer :: idx_n
+    integer :: idx_nneigh
+    ! end collection sizes
 
 
+    ! Size of first dimension
+    nmx = size(collection, 1)
+
+    ! collection idx
+    collection_size = max_size*5*max_neighbors + 1 + max_size
+    idx_x = 1
+    idx_n = idx_x + max_size*5*max_neighbors
+    idx_nneigh = idx_n + 1
+    !
+
+    ! Reshape
+    xx = reshape(source=collection(:,idx_x:idx_n-1), shape=[nmx, max_size, 5, max_neighbors])
+    nneighx = reshape(source=collection(:,idx_nneigh:collection_size), shape=[nmx, max_size])
+    nx = collection(:,idx_n)
 
 end subroutine
 
-subroutine representation2collection()
+subroutine representations2collection( &
+    collection, &
+    xx, nx, nneighx, &
+    max_size, max_neighbors)
+
+    !
+    ! Translate representations to global 2d collection
+    !
+    !       x1                       n1        nneigh1
+    ! max_size*5*max_neighbors  +    1    +    max_size
+    !
 
     implicit none
+
+    ! fchl collection of representations
+    double precision, dimension(:,:), intent(out) :: collection
+    !
+
+    ! fchl args
+    double precision, dimension(:,:,:,:), intent(in) :: xx
+    integer, dimension(:), intent(in) :: nx
+    integer, dimension(:,:), intent(in) :: nneighx
+
+    integer :: nmx
+    integer, intent(in) :: max_size
+    integer, intent(in) :: max_neighbors
+    ! end fchl args
+
+    ! collection sizes
+    integer :: collection_size
+    integer :: idx_x
+    integer :: idx_n
+    integer :: idx_nneigh
+    ! end collection sizes
+
+    ! Size of first dimension
+    nmx = size(collection, 1)
+
+    ! collection idx
+    collection_size = max_size*5*max_neighbors + 1 + max_size
+    idx_x = 1
+    idx_n = idx_x + max_size*5*max_neighbors
+    idx_nneigh = idx_n + 1
+    !
+
+    collection = 0.0d0
+    collection(:,idx_x:idx_n-1) = reshape(source=xx, shape=[nmx, max_size*5*max_neighbors])
+    collection(:,idx_n) = nx
+    collection(:,idx_nneigh:collection_size) = nneighx
 
 end subroutine
 
