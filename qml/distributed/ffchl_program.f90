@@ -1,7 +1,7 @@
 program fchl_mpi
 
     use mpi
-    use ffchl_wrapper, only: kernel_wrapper_fchl, representation2collection
+    use ffchl_wrapper, only: kernel_wrapper_fchl
     use ffchl_reader, only: fread_fchl_representations, fread_fchl_collection
     use freaders, only: fread_1d_integer, fread_2d_integer
 

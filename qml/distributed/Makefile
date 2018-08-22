@@ -25,7 +25,6 @@ ${OBJDIR}/%.o: %.f90
 
 test:
 	./qmlexe
-	@echo
 	./check.py test_ffchl_kernel data/qm7_fchl_kernel
 
 test_mpi:
