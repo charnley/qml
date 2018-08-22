@@ -1,19 +1,13 @@
 program fchl_mpi
 
     use mpi
-    use ffchl_wrapper, only: kernel_wrapper_fchl
-    use ffchl_reader, only: fread_fchl_representations
+    use ffchl_wrapper, only: kernel_wrapper_fchl, representation2collection
+    use ffchl_reader, only: fread_fchl_representations, fread_fchl_collection
     use freaders, only: fread_1d_integer, fread_2d_integer
 
     implicit none
 
-    double precision, allocatable, dimension(:,:,:,:) :: representations
-    double precision :: sigma
-
     integer :: i
-    integer :: n_molecules
-    integer :: n_representations
-    integer :: size_representations
     integer :: ratio, left
     integer :: fr, to
 
@@ -30,23 +24,12 @@ program fchl_mpi
     integer, dimension(:), allocatable :: n2
     integer, dimension(:,:), allocatable :: nneigh1
     integer, dimension(:,:), allocatable :: nneigh2
-    double precision, dimension(:), allocatable:: sigmas
-    integer :: nsigmas
-    double precision :: two_body_power
-    double precision :: three_body_power
-    double precision :: t_width
-    double precision :: d_width
-    double precision :: cut_start
-    double precision :: cut_distance
-    integer :: order
-    double precision :: distance_scale
-    double precision :: angular_scale
-    double precision, dimension(:,:), allocatable :: pd
-    logical :: alchemy
 
     double precision, dimension(:,:,:), allocatable :: kernels
     double precision, dimension(:,:), allocatable :: kernel
     double precision, dimension(:,:), allocatable :: local_kernel
+
+    integer :: nsigmas
     ! end fchl args
 
     ! fchl mpi
@@ -86,6 +69,8 @@ program fchl_mpi
 
 
     ! hardcoded test sizes
+    ! TODO read input file format?
+    ! INI?
     nm1 = 11
     nm1 = 11
     nm2 = nm1
@@ -93,7 +78,6 @@ program fchl_mpi
     max_neighbors = 23
     nsigmas = 1
     !
-
 
 
     ! Collection dimensions
@@ -113,39 +97,11 @@ program fchl_mpi
     if(irank.eq.0) then
 
         ! read representations
-
-        ! TODO read collection instead
-
-        allocate(representations(nm1, max_size, 5, max_size))
-        call fread_fchl_representations("data/qm7_fchl_representations", nm1, max_size, 5, max_size, representations)
-
-        allocate(n1(nm1))
-        allocate(n2(nm2))
-        call fread_1d_integer("data/qm7_fchl_n1", nm1, n1)
-        call fread_1d_integer("data/qm7_fchl_n1", nm2, n2)
-
-        allocate(nneigh1(nm1, max_size))
-        allocate(nneigh2(nm2, max_size))
-        call fread_2d_integer("data/qm7_fchl_neighbors1", nm1, max_size, nneigh1)
-        call fread_2d_integer("data/qm7_fchl_neighbors2", nm2, max_size, nneigh2)
-
-        ! Translate representations to global 2d collection
-        !
-        !       x1                       n1        nneigh1
-        ! max_size*5*max_neighbors  +    1    +    max_size
-        !
-
-        collection_x = 0.0d0
-        collection_x(:,idx_x:idx_n-1) = reshape(source=representations, shape=[nm1, max_size*5*max_neighbors])
-        collection_x(:,idx_n) = n1
-        collection_x(:,idx_nneigh:collection_size) = nneigh1
-
-        collection_y = 0.0d0
-        collection_y(:,idx_x:idx_n-1) = reshape(source=representations, shape=[nm2, max_size*5*max_neighbors])
-        collection_y(:,idx_n) = n2
-        collection_y(:,idx_nneigh:collection_size) = nneigh2
+        call fread_fchl_collection("data_fchl/qm7_fchl_1", collection_x, nm1, max_size, max_neighbors)
+        call fread_fchl_collection("data_fchl/qm7_fchl_2", collection_y, nm1, max_size, max_neighbors)
 
     end if
+
 
 
     ! Distribute collections
@@ -162,6 +118,7 @@ program fchl_mpi
     if(irank.eq.procs-1) then
         to = to + left
     end if
+
 
     ! local collection size
     local_size = to-fr+1
@@ -208,6 +165,8 @@ program fchl_mpi
 
     rcounts(size(rcounts)) = ratio*nm2 + left*nm2
 
+
+    ! Gather distributed kernel
     call MPI_Gatherv( &
 		local_kernel, scount, MPI_DOUBLE_PRECISION, &
 		kernel, rcounts, displacements, MPI_DOUBLE_PRECISION, &
@@ -227,13 +186,14 @@ program fchl_mpi
 
     end if
 
+
+    ! Deallocate mem
     deallocate(collection_x)
     deallocate(collection_y)
     deallocate(kernels)
     deallocate(local_kernel)
 
     if ( irank .eq. 0) then
-        deallocate(representations)
         deallocate(kernel)
     end if
 

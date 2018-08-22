@@ -57,7 +57,7 @@ subroutine collection2representation( &
 
 end subroutine
 
-subroutine representations2collection( &
+subroutine representation2collection( &
     collection, &
     xx, nx, nneighx, &
     max_size, max_neighbors)
@@ -195,14 +195,8 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
 
 
     ! Reshape collection to representations
-    x1 = reshape(source=collection_x(:,idx_x:idx_n-1), shape=[nm1, max_size, 5, max_neighbors])
-    x2 = reshape(source=collection_y(:,idx_x:idx_n-1), shape=[nm2, max_size, 5, max_neighbors])
-
-    nneigh1 = reshape(source=collection_x(:,idx_nneigh:collection_size), shape=[nm1, max_size])
-    nneigh2 = reshape(source=collection_y(:,idx_nneigh:collection_size), shape=[nm2, max_size])
-
-    n1 = collection_x(:,idx_n)
-    n2 = collection_y(:,idx_n)
+    call collection2representation(collection_x, x1, n1, nneigh1, max_size, max_neighbors)
+    call collection2representation(collection_y, x2, n2, nneigh2, max_size, max_neighbors)
 
 
     ! call the ffchl kernel function

@@ -4,16 +4,50 @@ module ffchl_reader
 
 contains
 
+subroutine fread_fchl_collection(fname, collection, nmx, max_size, max_neighbors)
 
-subroutine fread_fchl_representations(fname, ni, nj, nk, nl, representations)
+    use ffchl_wrapper, only: representation2collection
+    use freaders, only: fread_1d_integer, fread_2d_integer
+
+    implicit none
+
+    character(len=*), intent(in) :: fname
+    double precision, dimension(:,:), intent(out):: collection
+
+    integer, intent(in) :: nmx
+    integer, intent(in) :: max_size
+    integer, intent(in) :: max_neighbors
+
+    double precision, dimension(:,:,:,:), allocatable :: representations
+
+    integer, dimension(:), allocatable :: nx
+    integer, dimension(:,:), allocatable :: nneighx
+
+    integer :: ni, nj, nk, nl
+
+
+    ! Read all fchl representations
+    allocate(representations(nmx, max_size, 5, max_neighbors))
+    call fread_fchl_representations(trim(fname) // trim("_x"), representations)
+
+    allocate(nx(nmx))
+    call fread_1d_integer(trim(fname) // trim("_n"), nmx, nx)
+
+    allocate(nneighx(nmx, max_size))
+    call fread_2d_integer(trim(fname) // trim("_neighbors"), nmx, max_size, nneighx)
+
+    ! Translate
+    call representation2collection(collection, representations, nx, nneighx, max_size, max_neighbors)
+
+end subroutine
+
+
+subroutine fread_fchl_representations(fname, representations)
 
     implicit none
 
     character(len=*), intent(in) :: fname
     double precision, dimension(:,:,:,:), intent(out):: representations
-
-    integer :: ni, nj, nk, nl
-    integer :: i,j,k,l
 
     ! write(*,*) shape(representations)
 
