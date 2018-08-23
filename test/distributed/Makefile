@@ -9,17 +9,32 @@ SRCDIR_MPI=../../qml/distributed
 FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 ffchl_reader.f90 ffchl_wrapper.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
+.NOTPARALLEL:
 .PHONY: test objects
 
 
 
-all: objects test_fchl_gatherv_kernel
+all: objects test_fchl_gatherv_kernel test_fchl_guido test_fchl_gatherv_kernel_x
 
 
-test_fchl_gatherv_kernel: build/test_fchl_gatherv_kernel.o test_fchl_gatherv_kernel.exe
+test_fchl_gatherv_kernel: test_fchl_gatherv_kernel.exe
+	@ printf "%-40s" "$@"
 	@./test_fchl_gatherv_kernel.exe
-	@ echo -n "test_fchl_gatherv_kernel  "
 	@./check.py log/test_gatherv_kernel data_check/qm7_fchl_kernel
+
+
+test_fchl_gatherv_kernel_x: test_fchl_gatherv_kernel.exe
+	@ printf "%-40s" "$@"
+	@./test_fchl_gatherv_kernel.exe
+	@ echo "no" >> log/test_gatherv_kernel
+	@./check.py log/test_gatherv_kernel data_check/qm7_fchl_kernel
+
+
+test_fchl_guido:
+	@ printf "%-40s" "$@"
+	@ echo "Ok."
+
+
 
 
 objects: ${FOBJECTS}
@@ -33,7 +48,7 @@ ${OBJDIR}/%.o: ${SRCDIR_MPI}/%.f90
 ${OBJDIR}/%.o: %.f90
 	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
 
-%.exe: ${FOBJECTS}
+%.exe: ${OBJDIR}/%.o ${FOBJECTS}
 	${FORT} ${FOBJECTS} ${OBJDIR}/${@:.exe=.o} -module ${OBJDIR} -o $@
 
 
