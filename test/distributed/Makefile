@@ -9,7 +9,13 @@ SRCDIR_MPI=../../qml/distributed
 FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 ffchl_reader.f90 ffchl_wrapper.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
+# Don't run this makefile in parrallel
 .NOTPARALLEL:
+
+# Don't remove object files
+.PRECIOUS: ${OBJDIR}/%.o
+
+# These are not real files
 .PHONY: test objects
 
 
@@ -17,7 +23,7 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 all: objects test_fchl_gatherv_kernel test_fchl_guido test_fchl_gatherv_kernel_x
 
 
-test_fchl_gatherv_kernel: test_fchl_gatherv_kernel.exe
+test_fchl_gatherv_kernel: test_fchl_gatherv_kernel.exe log
 	@ printf "%-40s" "$@"
 	@./test_fchl_gatherv_kernel.exe
 	@./check.py log/test_gatherv_kernel data_check/qm7_fchl_kernel
@@ -37,7 +43,7 @@ test_fchl_guido:
 
 
 
-objects: ${FOBJECTS}
+objects: ${OBJDIR} ${FOBJECTS}
 
 ${OBJDIR}/%.o: ${SRCDIR_FCHL}/%.f90
 	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
@@ -52,13 +58,17 @@ ${OBJDIR}/%.o: %.f90
 	${FORT} ${FOBJECTS} ${OBJDIR}/${@:.exe=.o} -module ${OBJDIR} -o $@
 
 
-directories:
-	mkdir -p ${OBJDIR} log
+${OBJDIR}:
+	mkdir -p $@
+
+log:
+	mkdir -p $@
 
 clean:
 	rm ${OBJDIR}/*.o ${OBJDIR}/*.mod
 	rm *.exe
 
-
-
+super_clean:
+	rm -r log
+	rm -r ${OBJDIR}
 
