@@ -38,7 +38,7 @@ test_fchl_gatherv_kernel_x: test_fchl_gatherv_kernel.exe
 
 test_fchl_guido:
 	@ printf "%-40s" "$@"
-	@ echo "Ok."
+	@ echo "\033[32mPASSED\033[0m"
 
 
 
