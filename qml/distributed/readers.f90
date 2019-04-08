@@ -12,7 +12,11 @@ subroutine fread_logical(fname, arg)
     open(2, file=fname)
     read(2, *) i
     close(2)
-    arg = i
+    if (i .eq. 0) then
+      arg = .T.
+    else
+      arg = .F.
+    endif
 end subroutine
 
 subroutine fread_integer(fname, arg)
