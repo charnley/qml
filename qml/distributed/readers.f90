@@ -13,9 +13,9 @@ subroutine fread_logical(fname, arg)
     read(2, *) i
     close(2)
     if (i .eq. 0) then
-      arg = .T.
+      arg = .True.
     else
-      arg = .F.
+      arg = .False.
     endif
 end subroutine
 
