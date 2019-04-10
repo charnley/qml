@@ -75,18 +75,27 @@ program qml_driver
     call blacs_gridinfo(context, ranks_rows, ranks_cols, &
         local_rank_row, local_rank_col)
 
-    !TODO : read on rank 0 only
-    ! Read hyperparameters and arrat suzes
-    open(unit = 9, file = "parameters.fout", form="formatted")
+    ! Read hyperparameters and array sizes
+    if (local_id .eq. 0) then
+        open(unit = 9, file = "parameters.fout", form="formatted")
 
-        read(9,*) sigma, rep_size, n_i, n_j
+        read(9,*) sigma, rep_size, n_i, n_j, n_properties
+    endif
+    call MPI_Bcast(sigma, sizeof(sigma), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+    call MPI_Bcast(rep_size, sizeof(rep_size), MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+    call MPI_Bcast(n_i, sizeof(n_i), MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+    call MPI_Bcast(n_j, sizeof(n_j), MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+    call MPI_Bcast(n_properties, sizeof(n_properties), MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
 
-        ! Allocate labels
-        allocate(Y(n_i, n_properties))
+    allocate(Y(n_i, n_properties))
 
-        read(9,*) Y(:, n_i*n_properties)
-
-    close(9)
+    if (local_id .eq. 0) then
+        read(9,*) Y(:n_i, :n_properties)
+        close(9)
+    endif
+    do i = 1, n_properties
+        call MPI_Bcast(Y(:, i), n_properties, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+    enddo
     
     ! allocate alphas
     allocate(alphas(n_i, n_properties))
