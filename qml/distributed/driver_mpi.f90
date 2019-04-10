@@ -135,6 +135,8 @@ program qml_driver
             local_K(local_i, local_j) = exp(-sum(abs(reps_j(global_j,:) - reps_i(global_i,:)))/sigma)
         enddo
     enddo
+    deallocate(reps_i)
+    deallocate(reps_j)
 
     ! Setup variables for LAPACK
     call descinit(desca, n_i, n_j, block_size, block_size, 0, 0, context, MAX(1, local_K_rows), info)
@@ -153,9 +155,12 @@ program qml_driver
             local_B(local_i, local_j) = Y(global_i, local_j)
         enddo
     enddo
+    deallocate(Y)    
 
     ! Solver
     call pdgels("N", n_i, n_j, n_properties, local_K, 1, 1, desca, local_B, 1, 1, DESCB, work, lwork, info)
+    deallocate(work)
+    deallocate(local_K)
 
     ! Copy LAPACK output
     alphas = 0.0d0
@@ -166,6 +171,7 @@ program qml_driver
             alphas(global_i, global_j) = local_B(local_i, local_j)
         enddo
     enddo
+    deallocate(local_B)
     call DGSUM2D(context, "All", "1-tree", na, 1, alphas, 1, -1, -1)
 
     ! Save alphas to file
@@ -179,12 +185,6 @@ program qml_driver
     call blacs_exit(0)
 
     ! Clean up 
-    deallocate(work)
-    deallocate(local_B)
-    deallocate(reps_i)
-    deallocate(reps_j)
-    deallocate(local_K)
-    deallocate(Y)    
     deallocate(alphas)    
 
 end program qml_driver
