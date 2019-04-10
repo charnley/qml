@@ -23,6 +23,10 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 all: objects test_fchl_gatherv_kernel test_fchl_guido test_fchl_gatherv_kernel_x
 
 
+test_fchl_read_job: test_fchl_read_job.exe
+	./test_fchl_read_job.exe
+
+
 test_fchl_gatherv_kernel: test_fchl_gatherv_kernel.exe log
 	@ printf "%-40s" "$@"
 	@./test_fchl_gatherv_kernel.exe
