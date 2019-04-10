@@ -67,10 +67,7 @@ program test_fchl_gatherv_kernel
     call MPI_Comm_rank(MPI_COMM_WORLD, irank, ierror)
     call MPI_Comm_size(MPI_COMM_WORLD, procs, ierror)
 
-
-    ! hardcoded test sizes
-    ! TODO read input file format?
-    ! INI?
+    !
     nm1 = 11
     nm1 = 11
     nm2 = nm1
@@ -78,7 +75,6 @@ program test_fchl_gatherv_kernel
     max_neighbors = 23
     nsigmas = 1
     !
-
 
     ! Collection dimensions
     collection_size = max_size*5*max_neighbors + 1 + max_size
@@ -97,11 +93,13 @@ program test_fchl_gatherv_kernel
     if(irank.eq.0) then
 
         ! read representations
-        call fread_fchl_collection("data_read/qm7_fchl_1", collection_x, nm1, max_size, max_neighbors)
-        call fread_fchl_collection("data_read/qm7_fchl_2", collection_y, nm1, max_size, max_neighbors)
+        ! call fread_fchl_collection("data_read/qm7_fchl_1", collection_x, nm1, max_size, max_neighbors)
+        ! call fread_fchl_collection("data_read/qm7_fchl_1", collection_y, nm2, max_size, max_neighbors)
+
+        call fread_fchl_collection("jobname/_fchl__a", collection_x, nm1, max_size, max_neighbors)
+        call fread_fchl_collection("jobname/_fchl__b", collection_y, nm2, max_size, max_neighbors)
 
     end if
-
 
 
     ! Distribute collections
@@ -140,11 +138,9 @@ program test_fchl_gatherv_kernel
     kernels = 0.0d0
 	local_kernel = 0.0d0
 
-
     ! Fill out kernel
     call kernel_wrapper_fchl(local_collection_x, local_collection_y, kernels)
 	local_kernel = kernels(1,:,:)
-
 
     ! Collect kernel
     if ( irank .eq. 0 ) then
@@ -164,7 +160,6 @@ program test_fchl_gatherv_kernel
     end do
 
     rcounts(size(rcounts)) = ratio*nm2 + left*nm2
-
 
     ! Gather distributed kernel
     call MPI_Gatherv( &
