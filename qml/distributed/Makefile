@@ -12,7 +12,7 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 .PHONY: test
 
-all: ${TARGET}
+all: ${TARGET} pythonmods
 
 ${TARGET}: ${FOBJECTS}
 	${FORT} ${FOBJECTS} -module ${OBJDIR} -o $@
@@ -22,6 +22,9 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.f90
 
 ${OBJDIR}/%.o: %.f90
 	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
+
+pythonmods:
+	f2py -c -m save_npy save_npy.f90
 
 test:
 	./qmlexe

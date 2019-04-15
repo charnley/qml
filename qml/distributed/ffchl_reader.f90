@@ -134,7 +134,8 @@ subroutine fread_fchl_collection(fname, collection, nmx, max_size, max_neighbors
 
     ! Read all fchl representations
     allocate(representations(nmx, max_size, 5, max_neighbors))
-    call fread_fchl_representations(trim(fname) // trim("_x"), representations)
+    call fread_fchl_representations(trim(fname) // trim("_representations"), representations)
+
 
     allocate(nx(nmx))
     call fread_1d_integer(trim(fname) // trim("_n"), nmx, nx)
@@ -160,6 +161,26 @@ subroutine fread_fchl_representations(fname, representations)
     open(21, file=fname, form='unformatted')
     read(21) representations
     close(21)
+
+end subroutine
+
+
+subroutine fread_fchl_sizes(fname, max_size, max_neighbors, nm1, nm2)
+
+    use freaders, only: fread_integer
+
+    implicit none
+
+    character(len=*), intent(in) :: fname
+    integer, intent(out) :: max_size
+    integer, intent(out) :: max_neighbors
+    integer, intent(out) :: nm1
+    integer, intent(out) :: nm2
+
+    call fread_integer(trim(fname) // trim("_fchl_max_size"), max_size)
+    call fread_integer(trim(fname) // trim("_fchl_max_neighbors"), max_neighbors)
+    call fread_integer(trim(fname) // trim("_fchl__a_size"), nm1)
+    call fread_integer(trim(fname) // trim("_fchl__b_size"), nm2)
 
 end subroutine
 

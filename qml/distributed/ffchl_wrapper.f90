@@ -113,4 +113,21 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
 
 end subroutine
 
+
+subroutine kernel_wrapper_fchl_view(collection_x, collection_y, view_x, view_y, kernel)
+
+    implicit none
+
+    ! fchl collection of representations
+    double precision, dimension(:,:), intent(in) :: collection_x
+    double precision, dimension(:,:), intent(in) :: collection_y
+    integer, dimension(:), intent(in) :: view_x
+    integer, dimension(:), intent(in) :: view_y
+    double precision, dimension(:,:,:), intent(out) :: kernel
+
+
+
+end subroutine
+
+
 end module ffchl_wrapper
