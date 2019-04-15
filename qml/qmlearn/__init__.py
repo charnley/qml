@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2017 Anders S. Christensen
+# Copyright (c) 2018 Lars Andersen Bratholm
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from __future__ import division, absolute_import, print_function
-
-import numpy as np
-
-import ase
-from ase.io import read
-from ase.db import connect
-
-
-class DataProvider(object):
-
-    def __init__(self, properties, name="compounds"):
-
-        self.name = name
-        self.properties = properties
-        self.compounds = None
-
-    def get_properties(self, idx=None):
-
-        return self.properties, self.compounds 
-
-    def read_database(self, db_filename):
-
-        self.compounds = connect(db_filename)
-
+from .data import Data
+from . import representations
+from . import kernels
+from . import preprocessing
+from . import models
