@@ -5,3 +5,4 @@ build/*
 
 qmlexe
 test_*
+qml/*
