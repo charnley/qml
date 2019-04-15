@@ -1,12 +1,14 @@
 
-FLAGS=-debug all
 FORT=mpiifort
+
+FLAGS=-debug all
+LDFLAGS=-lmkl_blacs_intelmpi_lp64 -lmkl_scalapack_lp64 -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
 
 OBJDIR=build
 SRCDIR_FCHL=../../qml/fchl
 SRCDIR_MPI=../../qml/distributed
 
-FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 ffchl_reader.f90 ffchl_wrapper.f90
+FSOURCES=ffchl_module.f90 ffchl_scalar_kernels.f90 readers.f90 printers.f90 ffchl_reader.f90 ffchl_wrapper.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 # Don't run this makefile in parrallel
@@ -20,7 +22,7 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 
 
-all: objects test_fchl_gatherv_kernel test_fchl_guido test_fchl_gatherv_kernel_x
+all: objects test_fchl_gatherv_kernel
 
 
 test_fchl_read_job: test_fchl_read_job.exe
@@ -28,22 +30,13 @@ test_fchl_read_job: test_fchl_read_job.exe
 
 
 test_fchl_gatherv_kernel: test_fchl_gatherv_kernel.exe log
-	@ printf "%-40s" "$@"
 	@./test_fchl_gatherv_kernel.exe
+	@ printf "%-40s" "$@"
 	@./check.py log/test_gatherv_kernel data_check/qm7_fchl_kernel
 
 
-test_fchl_gatherv_kernel_x: test_fchl_gatherv_kernel.exe
-	@ printf "%-40s" "$@"
-	@./test_fchl_gatherv_kernel.exe
-	@ echo "no" >> log/test_gatherv_kernel
-	@./check.py log/test_gatherv_kernel data_check/qm7_fchl_kernel
-
-
-test_fchl_guido:
-	@ printf "%-40s" "$@"
-	@ echo "\033[32mPASSED\033[0m"
-
+test_fchl_qm7_nn_1p: test_fchl_qm7_nn_1p.exe
+	./test_fchl_qm7_nn_1p.exe
 
 
 
@@ -59,7 +52,7 @@ ${OBJDIR}/%.o: %.f90
 	${FORT} -c -module ${OBJDIR} ${FLAGS} $< -o $@
 
 %.exe: ${OBJDIR}/%.o ${FOBJECTS}
-	${FORT} ${FOBJECTS} ${OBJDIR}/${@:.exe=.o} -module ${OBJDIR} -o $@
+	${FORT} ${LDFLAGS} ${FOBJECTS} ${OBJDIR}/${@:.exe=.o} -module ${OBJDIR} -o $@
 
 
 ${OBJDIR}:

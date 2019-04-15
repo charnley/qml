@@ -41,6 +41,8 @@ program test_fchl_read_job
 
     write(*,*) collection_x
 
+    write(*,*) "collection * size", collection_size*nm1
+
     deallocate(collection_x)
 
 end program test_fchl_read_job

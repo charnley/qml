@@ -93,9 +93,6 @@ program test_fchl_gatherv_kernel
     if(irank.eq.0) then
 
         ! read representations
-        ! call fread_fchl_collection("data_read/qm7_fchl_1", collection_x, nm1, max_size, max_neighbors)
-        ! call fread_fchl_collection("data_read/qm7_fchl_1", collection_y, nm2, max_size, max_neighbors)
-
         call fread_fchl_collection("jobname/_fchl__a", collection_x, nm1, max_size, max_neighbors)
         call fread_fchl_collection("jobname/_fchl__b", collection_y, nm2, max_size, max_neighbors)
 
