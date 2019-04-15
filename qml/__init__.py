@@ -32,7 +32,6 @@ Provides
 """
 from __future__ import absolute_import
 
-from . import data
 from . import models
 from . import aglaia
 from . import math
@@ -40,6 +39,9 @@ from . import kernels
 from . import arad
 from . import fchl
 from . import representations
+from . import qmlearn
+from . import utils
+from .utils.compound import Compound
 
 __author__ = "Anders S. Christensen"
 __copyright__ = "Copyright 2016"

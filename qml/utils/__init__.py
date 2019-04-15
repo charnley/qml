@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2017 Anders S. Christensen
+# Copyright (c) 2017-2018 Silvia Amabilino, Lars Andersen Bratholm
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from __future__ import division, absolute_import, print_function
-
-import numpy as np
-
-import ase
-from ase.io import read
-from ase.db import connect
-
-from .dataprovider import DataProvider
-
-class XYZDataProvider(DataProvider):
-
-    def add_structures(self, xyz_filenames):
-
-        self.compounds = connect(self.name+ ".db")
-
-        for i, xyz_filename in enumerate(xyz_filenames):
-            print(i, xyz_filename, self.properties[i])
-            compound = read(xyz_filename)
-            self.compounds.write(compound)
- 
+from . import alchemy
+from .utils import *
+from .alchemy import ELEMENT_NAME, NUCLEAR_CHARGE
