@@ -3,4 +3,5 @@
 *.exe
 *.mod
 log/*
+*.log
 
