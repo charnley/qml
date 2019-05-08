@@ -4,6 +4,7 @@ program test_fchl_gatherv_kernel
     use ffchl_wrapper, only: kernel_wrapper_fchl
     use ffchl_reader, only: fread_fchl_collection
     use freaders, only: fread_1d_integer, fread_2d_integer
+    use fprinters, only: print_matrix
 
     implicit none
 
@@ -93,8 +94,8 @@ program test_fchl_gatherv_kernel
     if(irank.eq.0) then
 
         ! read representations
-        call fread_fchl_collection("jobname/_fchl__a", collection_x, nm1, max_size, max_neighbors)
-        call fread_fchl_collection("jobname/_fchl__b", collection_y, nm2, max_size, max_neighbors)
+        call fread_fchl_collection("jobname_dev/_fchl__a", collection_x, nm1, max_size, max_neighbors)
+        call fread_fchl_collection("jobname_dev/_fchl__b", collection_y, nm2, max_size, max_neighbors)
 
     end if
 
