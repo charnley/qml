@@ -60,7 +60,7 @@ ext_fkernels = Extension(name = '.kernels.fkernels',
                           language = FORTRAN,
                           f2py_options=['--quiet'])
 
-ext_ffchl_module = Extension(name = '.fchl.ffchl_module',
+ext_ffchl_module = Extension(name = '.fchl.ffchl',
                           sources = [
                               'qml/fchl/ffchl_module.f90',
                               'qml/fchl/ffchl_kernels.f90',
