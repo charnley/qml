@@ -25,17 +25,22 @@ from __future__ import absolute_import
 import numpy as np
 import copy
 
+from . import ffchl
 
-from .ffchl_module import fget_kernels_fchl
-from .ffchl_module import fget_symmetric_kernels_fchl
-from .ffchl_module import fget_global_kernels_fchl
-from .ffchl_module import fget_global_symmetric_kernels_fchl
-from .ffchl_module import fget_atomic_kernels_fchl
-from .ffchl_module import fget_atomic_symmetric_kernels_fchl
+# from .ffchl_module import fget_kernels_fchl
 
-from .ffchl_module import fget_atomic_local_kernels_fchl
+fget_symmetric_kernels_fchl = ffchl.ffchl_scalar.fget_symmetric_kernels
+fget_kernels_fchl = ffchl.ffchl_scalar.fget_kernels
+fget_symmetric_kernels_fchl = ffchl.ffchl_scalar.fget_symmetric_kernels
+fget_global_kernels_fchl = ffchl.ffchl_scalar.fget_global_kernels
+fget_global_symmetric_kernels_fchl = ffchl.ffchl_scalar.fget_global_symmetric_kernels
+fget_atomic_kernels_fchl = ffchl.ffchl_scalar.fget_atomic_kernels
+fget_atomic_symmetric_kernels_fchl = ffchl.ffchl_scalar.fget_atomic_symmetric_kernels
+
+fget_atomic_local_kernels_fchl = ffchl.ffchl_scalar.fget_atomic_local_kernels
 
 from .fchl_kernel_functions import get_kernel_parameters
+
 from qml.utils.alchemy import get_alchemy
 
 
@@ -129,7 +134,7 @@ def get_local_kernels(A, B, verbose=False,\
 
     kernel_idx, kernel_parameters, n_kernels = get_kernel_parameters(kernel, kernel_args)
 
-    return fget_kernels_fchl(A, B, verbose, N1, N2, neighbors1, neighbors2, nm1, nm2, n_kernels, \
+    return fget_kernels(A, B, verbose, N1, N2, neighbors1, neighbors2, nm1, nm2, n_kernels, \
                 three_body_width, two_body_width, cut_start, cut_distance, fourier_order, pd, two_body_scaling, three_body_scaling, doalchemy, two_body_power, three_body_power, kernel_idx, kernel_parameters)
 
 

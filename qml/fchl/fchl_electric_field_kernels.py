@@ -25,9 +25,9 @@ from __future__ import absolute_import
 import numpy as np
 import copy
 
-from .ffchl_module import fget_ef_gaussian_process_kernels_fchl 
-from .ffchl_module import fget_ef_atomic_local_kernels_fchl
-from .ffchl_module import fget_ef_atomic_local_gradient_kernels_fchl
+from .ffchl import fget_ef_gaussian_process_kernels_fchl 
+from .ffchl import fget_ef_atomic_local_kernels_fchl
+from .ffchl import fget_ef_atomic_local_gradient_kernels_fchl
 
 from .fchl_kernel_functions import get_kernel_parameters
 

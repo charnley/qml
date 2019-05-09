@@ -26,14 +26,14 @@ import numpy as np
 import copy
 
 
-from .ffchl_module import fget_gaussian_process_kernels_fchl
-from .ffchl_module import fget_local_gradient_kernels_fchl
-from .ffchl_module import fget_local_hessian_kernels_fchl
-from .ffchl_module import fget_local_symmetric_hessian_kernels_fchl
+from .ffchl import fget_gaussian_process_kernels_fchl
+from .ffchl import fget_local_gradient_kernels_fchl
+from .ffchl import fget_local_hessian_kernels_fchl
+from .ffchl import fget_local_symmetric_hessian_kernels_fchl
 
-from .ffchl_module import fget_force_alphas_fchl
-from .ffchl_module import fget_atomic_local_gradient_kernels_fchl
-from .ffchl_module import fget_atomic_local_gradient_5point_kernels_fchl
+from .ffchl import fget_force_alphas_fchl
+from .ffchl import fget_atomic_local_gradient_kernels_fchl
+from .ffchl import fget_atomic_local_gradient_5point_kernels_fchl
 
 from .fchl_kernel_functions import get_kernel_parameters
 

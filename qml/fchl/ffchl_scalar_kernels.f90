@@ -1,4 +1,10 @@
-subroutine fget_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2, nsigmas, &
+module ffchl_scalar
+
+    implicit none
+
+contains
+
+subroutine fget_kernels(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
        & kernel_idx, parameters, kernels)
@@ -102,7 +108,7 @@ subroutine fget_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2
 
     ! Variables to calculate time 
     double precision :: t_start, t_end
-    
+
     if (verbose) write (*,*) "CLEARING KERNEL MEM"
     kernels(:,:,:) = 0.0d0
 
@@ -147,7 +153,7 @@ subroutine fget_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2
 
     t_start = omp_get_wtime()
     if (verbose) write (*,"(A)", advance="no") "KERNEL"
-    
+
     !$OMP PARALLEL DO schedule(dynamic) PRIVATE(s12,ni,nj)
     do b = 1, nm2
         nj = n2(b)
@@ -167,7 +173,7 @@ subroutine fget_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2
                     kernels(:, a, b) = kernels(:, a, b) &
                         & + kernel(self_scalar1(a,i),  self_scalar2(b,j), s12, &
                         & kernel_idx, parameters)
-                    
+
                 enddo
             enddo
 
@@ -187,10 +193,10 @@ subroutine fget_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, nm1, nm2
     deallocate(sinp1)
     deallocate(sinp2)
 
-end subroutine fget_kernels_fchl
+end subroutine fget_kernels
 
 
-subroutine fget_symmetric_kernels_fchl(x1, verbose, n1, nneigh1, nm1, nsigmas, &
+subroutine fget_symmetric_kernels(x1, verbose, n1, nneigh1, nm1, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
        & kernel_idx, parameters, kernels)
@@ -326,10 +332,10 @@ subroutine fget_symmetric_kernels_fchl(x1, verbose, n1, nneigh1, nm1, nsigmas, &
     deallocate(cosp1)
     deallocate(sinp1)
 
-end subroutine fget_symmetric_kernels_fchl
+end subroutine fget_symmetric_kernels
 
 
-subroutine fget_global_symmetric_kernels_fchl(x1, verbose, n1, nneigh1, nm1, nsigmas, &
+subroutine fget_global_symmetric_kernels(x1, verbose, n1, nneigh1, nm1, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
        & kernel_idx, parameters, kernels)
@@ -493,10 +499,10 @@ subroutine fget_global_symmetric_kernels_fchl(x1, verbose, n1, nneigh1, nm1, nsi
     deallocate(cosp1)
     deallocate(sinp1)
 
-end subroutine fget_global_symmetric_kernels_fchl
+end subroutine fget_global_symmetric_kernels
 
 
-subroutine fget_global_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, &
+subroutine fget_global_kernels(x1, x2, verbose, n1, n2, nneigh1, nneigh2, &
        & nm1, nm2, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
@@ -712,10 +718,10 @@ subroutine fget_global_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, &
     deallocate(sinp1)
     deallocate(sinp2)
 
-end subroutine fget_global_kernels_fchl
+end subroutine fget_global_kernels
 
 
-subroutine fget_atomic_kernels_fchl(x1, x2, verbose, nneigh1, nneigh2, &
+subroutine fget_atomic_kernels(x1, x2, verbose, nneigh1, nneigh2, &
        & na1, na2, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
@@ -886,10 +892,10 @@ subroutine fget_atomic_kernels_fchl(x1, x2, verbose, nneigh1, nneigh2, &
     deallocate(sinp1)
     deallocate(sinp2)
 
-end subroutine fget_atomic_kernels_fchl
+end subroutine fget_atomic_kernels
 
 
-subroutine fget_atomic_symmetric_kernels_fchl(x1, verbose, nneigh1, na1, nsigmas, &
+subroutine fget_atomic_symmetric_kernels(x1, verbose, nneigh1, na1, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
        & kernel_idx, parameters, kernels)
@@ -1029,10 +1035,10 @@ subroutine fget_atomic_symmetric_kernels_fchl(x1, verbose, nneigh1, na1, nsigmas
     deallocate(cosp1)
     deallocate(sinp1)
 
-end subroutine fget_atomic_symmetric_kernels_fchl
+end subroutine fget_atomic_symmetric_kernels
 
 
-subroutine fget_atomic_local_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nneigh2, &
+subroutine fget_atomic_local_kernels(x1, x2, verbose, n1, n2, nneigh1, nneigh2, &
        & nm1, nm2, na1, nsigmas, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
        & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
@@ -1210,4 +1216,6 @@ subroutine fget_atomic_local_kernels_fchl(x1, x2, verbose, n1, n2, nneigh1, nnei
     deallocate(sinp1)
     deallocate(sinp2)
 
-end subroutine fget_atomic_local_kernels_fchl
+end subroutine fget_atomic_local_kernels
+
+end module
