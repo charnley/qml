@@ -105,7 +105,7 @@ program test_fchl_gatherv_kernel
         local_rank_row, local_rank_col)
 
 
-    write(*,*) local_rank_row, local_rank_col, ranks_rows, ranks_cols, context
+    ! write(*,*) local_rank_row, local_rank_col, ranks_rows, ranks_cols, context
 
     ! Hardcoded test
     nsigmas = 1
@@ -197,7 +197,7 @@ program test_fchl_gatherv_kernel
     ! Solve KRR
     if (local_id .eq. 0) then
 
-        call print_matrix(local_K, 11, 11)
+        ! call print_matrix(local_K, 11, 11)
 
     end if
 
@@ -225,7 +225,7 @@ program test_fchl_gatherv_kernel
     call pdgels("N", nm1, nm2, n_properties, local_K, 1, 1, desca, local_B, 1, 1, DESCB, work, lwork, info)
     deallocate(work)
 
-    write(*,*) local_B
+    ! write(*,*) local_B
 
 
     ! Copy LAPACK output
@@ -244,8 +244,8 @@ program test_fchl_gatherv_kernel
 
     ! Save alphas to file
     if (local_id .eq. 0) then
-        open(unit = 9, file = "alphas_mpi.fout", form="formatted")
-            write(9,*) alphas(:,:)
+        open(unit = 9, file = "log/test_qm7_nn_1p_alpha", form="formatted")
+        call print_matrix(alphas, 1, nm1, 9)
         close(9)
     end if
 
