@@ -186,9 +186,10 @@ end subroutine
 
 
 subroutine fread_fchl_args(fname, max_size, max_neighbors, &
-       & sigmas, nsigmas, &
+       & n_kernels, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
-       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power)
+       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
+       & kernel_idx, parameters)
 
     use freaders, only: fread_logical, fread_integer, fread_double, fread_1d_integer, fread_2d_integer, fread_1d_double, fread_2d_double
 
@@ -199,11 +200,8 @@ subroutine fread_fchl_args(fname, max_size, max_neighbors, &
     integer, intent(out) :: max_size
     integer, intent(out) :: max_neighbors
 
-    ! Sigma in the Gaussian kernel
-    double precision, dimension(:), allocatable, intent(out) :: sigmas
-
-    ! Number of sigmas
-    integer :: nsigmas
+    ! Number of kernels
+    integer :: n_kernels
 
     double precision :: two_body_power
     double precision :: three_body_power
@@ -220,10 +218,13 @@ subroutine fread_fchl_args(fname, max_size, max_neighbors, &
 
     logical :: alchemy
 
+    ! Kernel ID and corresponding parameters
+    integer, intent(out) :: kernel_idx
+    double precision, dimension(:,:), allocatable, intent(out) :: parameters
+    integer, dimension(2) :: shape_parameters
+
     max_size = 23
     max_neighbors = 23
-
-    allocate(sigmas(nsigmas))
 
     allocate(pd(100,100))
 
@@ -242,10 +243,14 @@ subroutine fread_fchl_args(fname, max_size, max_neighbors, &
     call fread_double(trim(fname) // trim("_two_body_scaling"), distance_scale)
     call fread_double(trim(fname) // trim("_three_body_scaling"), angular_scale)
 
-    call fread_1d_double(trim(fname) // trim("_sigmas"), nsigmas, sigmas)
-
     call fread_2d_double(trim(fname) // trim("_pd"), 100, 100, pd)
 
+    ! kernel parameters
+    call fread_1d_integer(trim(fname) // trim("_kernel_parameters_shape"), 2, shape_parameters)
+    allocate(parameters(shape_parameters(1), shape_parameters(2)))
+    call fread_2d_double(trim(fname) // trim("_kernel_parameters"), shape_parameters(1), shape_parameters(2), parameters)
+
+    call fread_integer(trim(fname) // trim("_kernel_idx"), kernel_idx)
 
 end subroutine
 

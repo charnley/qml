@@ -12,7 +12,7 @@ contains
         implicit none
 
         write(stdout, "(a)")
-        write(stdout, "(a)") "usage: ppqm [optional] <input folder>"
+        write(stdout, "(a)") "usage: qml.exe [optional] <input folder>"
         write(stdout, "(a)")
         write(stdout, "(a)") "optional arguments:"
         write(stdout, "(a)") "-v, --version         show the version number and exit"
@@ -199,7 +199,7 @@ contains
     end subroutine
 
 
-    subroutine print_matrix(matrix, rows, cols)
+    subroutine print_matrix(matrix, rows, cols, writeunit)
 
         use, intrinsic :: iso_fortran_env, only: stdout=>output_unit, stderr=>output_unit
 
@@ -209,15 +209,26 @@ contains
         integer :: cols
 
         integer :: i, j
+        integer, optional :: writeunit
+        integer :: outputunit
 
         double precision, dimension(rows, cols) :: matrix
 
+        if(present(writeunit)) then
+            outputunit = writeunit
+        else
+            outputunit = stdout
+        end if
+
         do i = 1, rows
-            write(stdout, 20, advance="no")  matrix(i,1:cols)
-            write(stdout, "(a)")
+            do j = 1, cols
+                write(outputunit, 20, advance="no")  matrix(i, j)
+            end do
+            write(outputunit, "(a)")
         end do
 
-        20 format(100f11.5)
+        ! TODO this is not so pretty
+        20 format(' ', d22.15)
 
     end subroutine
 

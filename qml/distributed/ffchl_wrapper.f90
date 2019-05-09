@@ -4,17 +4,17 @@ module ffchl_wrapper
 
 contains
 
-subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
+subroutine kernel_wrapper_fchl(collection_x, collection_y, kernels)
 
     use ffchl_reader, only: fread_fchl_args, collection2representation
-    use ffchl_scalar_kernels, only: fget_kernels_fchl
+    use ffchl_scalar, only: fget_kernels
 
     implicit none
 
     ! fchl collection of representations
     double precision, dimension(:,:), intent(in) :: collection_x
     double precision, dimension(:,:), intent(in) :: collection_y
-    double precision, dimension(:,:,:), intent(out) :: kernel
+    double precision, dimension(:,:,:), intent(out) :: kernels
     !
 
     ! fchl args
@@ -31,7 +31,7 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     integer, dimension(:,:), allocatable :: nneigh1
     integer, dimension(:,:), allocatable :: nneigh2
     double precision, dimension(:), allocatable:: sigmas
-    integer :: nsigmas
+    integer :: n_kernels
     double precision :: two_body_power
     double precision :: three_body_power
     double precision :: t_width
@@ -43,6 +43,11 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     double precision :: angular_scale
     double precision, dimension(:,:), allocatable :: pd
     logical :: alchemy
+
+    ! Kernel ID and corresponding parameters
+    integer :: kernel_idx
+    double precision, dimension(:,:), allocatable :: parameters
+
     ! end fchl args
 
     ! collection sizes
@@ -52,22 +57,23 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     integer :: idx_nneigh
     ! end collection sizes
 
+    integer, dimension(:), allocatable :: jk
 
     ! size of collections
     nm1 = size(collection_x, 1)
     nm2 = size(collection_y, 1)
 
     ! hardcode fchl sizes
-    nsigmas = 1
+    n_kernels = 1
     ! end hardcode fchl sizes
-
 
     ! read fchl args
     ! TODO Broadcast this stuff
-    call fread_fchl_args("data/qm7_fchl", max_size, max_neighbors, &
-       & sigmas, nsigmas, &
+    call fread_fchl_args("jobname_dev/_fchl", max_size, max_neighbors, &
+       & n_kernels, &
        & t_width, d_width, cut_start, cut_distance, order, pd, &
-       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power)
+       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
+       & kernel_idx, parameters)
 
 
     ! collection index
@@ -93,18 +99,15 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     call collection2representation(collection_x, x1, n1, nneigh1, max_size, max_neighbors)
     call collection2representation(collection_y, x2, n2, nneigh2, max_size, max_neighbors)
 
-
     ! call the ffchl kernel function
-    call fget_kernels_fchl(x1, x2, n1, n2, nneigh1, nneigh2, &
-       & sigmas, nm1, nm2, nsigmas, &
-       & t_width, d_width, cut_start, cut_distance, order, pd, &
-       & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, kernel)
-
+    call fget_kernels(x1, x2, .False., n1, n2, nneigh1, nneigh2, nm1, nm2, n_kernels, &
+         & t_width, d_width, cut_start, cut_distance, order, pd, &
+         & distance_scale, angular_scale, alchemy, two_body_power, three_body_power, &
+         & kernel_idx, parameters, kernels)
 
     deallocate(x1)
     deallocate(x2)
 
-    deallocate(sigmas)
     deallocate(n1)
     deallocate(n2)
     deallocate(nneigh1)
@@ -112,22 +115,5 @@ subroutine kernel_wrapper_fchl(collection_x, collection_y, kernel)
     deallocate(pd)
 
 end subroutine
-
-
-subroutine kernel_wrapper_fchl_view(collection_x, collection_y, view_x, view_y, kernel)
-
-    implicit none
-
-    ! fchl collection of representations
-    double precision, dimension(:,:), intent(in) :: collection_x
-    double precision, dimension(:,:), intent(in) :: collection_y
-    integer, dimension(:), intent(in) :: view_x
-    integer, dimension(:), intent(in) :: view_y
-    double precision, dimension(:,:,:), intent(out) :: kernel
-
-
-
-end subroutine
-
 
 end module ffchl_wrapper
