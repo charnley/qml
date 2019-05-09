@@ -6,3 +6,5 @@ build/*
 qmlexe
 test_*
 qml/*
+
+jobname*
