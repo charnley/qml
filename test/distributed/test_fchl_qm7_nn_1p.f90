@@ -116,7 +116,7 @@ program test_fchl_gatherv_kernel
     if (local_id .eq. 0) then
 
         ! Read the sizes
-        call fread_fchl_sizes("jobname/", &
+        call fread_fchl_sizes("jobname_dev/", &
             max_size, &
             max_neighbors, &
             nm1, &
@@ -140,11 +140,11 @@ program test_fchl_gatherv_kernel
     if (local_id .eq. 0) then
 
         ! Collection dimensions and allocate collections, then read collections
-        call fread_fchl_collection("jobname/_fchl__a", collection_x, nm1, max_size, max_neighbors)
-        call fread_fchl_collection("jobname/_fchl__b", collection_y, nm2, max_size, max_neighbors)
+        call fread_fchl_collection("jobname_dev/_fchl__a", collection_x, nm1, max_size, max_neighbors)
+        call fread_fchl_collection("jobname_dev/_fchl__b", collection_y, nm2, max_size, max_neighbors)
 
         ! Allocate and read properties
-        call fread_2d_double("jobname/_properties", nm1, n_properties, properties)
+        call fread_2d_double("jobname_dev/_properties", nm1, n_properties, properties)
 
     endif ! rank 0
     ! END READ
