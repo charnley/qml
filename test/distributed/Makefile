@@ -8,7 +8,7 @@ OBJDIR=build
 SRCDIR_FCHL=../../qml/fchl
 SRCDIR_MPI=../../qml/distributed
 
-FSOURCES=ffchl_module.f90 ffchl_kernels.f90 ffchl_scalar_kernels.f90 readers.f90 printers.f90 ffchl_test.f90 ffchl_reader.f90 ffchl_wrapper.f90
+FSOURCES=ffchl_module.f90 ffchl_kernels.f90 ffchl_scalar_kernels.f90 readers.f90 printers.f90 ffchl_reader.f90 ffchl_wrapper.f90
 FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 # Don't run this makefile in parrallel
@@ -22,8 +22,9 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 
 
 
-all: objects test_fchl_gatherv_kernel test_fchl_qm7_nn_1p
+all: objects exes test_fchl_gatherv_kernel test_fchl_qm7_nn_1p
 
+exes: test_fchl_gatherv_kernel.exe test_fchl_qm7_nn_1p.exe
 
 test_fchl_read_job: test_fchl_read_job.exe
 	./test_fchl_read_job.exe
