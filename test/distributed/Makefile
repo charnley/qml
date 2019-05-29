@@ -18,13 +18,13 @@ FOBJECTS=$(addprefix $(OBJDIR)/, $(FSOURCES:.f90=.o))
 .PRECIOUS: ${OBJDIR}/%.o
 
 # These are not real files
-.PHONY: test objects
+.PHONY: test objects execs
 
 
+all: objects exes test_fchl_gatherv_kernel test_fchl_qm7_nn_1p test_fchl_qm7_nn_2p
 
-all: objects exes test_fchl_gatherv_kernel test_fchl_qm7_nn_1p
+exes: objects test_fchl_gatherv_kernel.exe test_fchl_qm7_nn_1p.exe test_fchl_qm7_nn_2p.exe
 
-exes: test_fchl_gatherv_kernel.exe test_fchl_qm7_nn_1p.exe
 
 test_fchl_read_job: test_fchl_read_job.exe
 	./test_fchl_read_job.exe
@@ -40,6 +40,12 @@ test_fchl_qm7_nn_1p: test_fchl_qm7_nn_1p.exe
 	@./test_fchl_qm7_nn_1p.exe
 	@ printf "%-40s" "$@"
 	@./check.py jobname_dev/_fchl_alpha log/test_qm7_nn_1p_alpha
+
+
+test_fchl_qm7_nn_2p: test_fchl_qm7_nn_2p.exe
+	@./test_fchl_qm7_nn_2p.exe
+	@ printf "%-40s" "$@"
+	@./check.py jobname_dev/_fchl_alpha2 log/test_qm7_nn_2p_alpha
 
 
 

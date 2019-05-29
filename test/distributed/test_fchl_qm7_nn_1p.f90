@@ -245,7 +245,7 @@ program test_fchl_gatherv_kernel
     ! Save alphas to file
     if (local_id .eq. 0) then
         open(unit = 9, file = "log/test_qm7_nn_1p_alpha", form="formatted")
-        call print_matrix(alphas, 1, nm1, 9)
+        call print_matrix(alphas, n_properties, nm1, 9)
         close(9)
     end if
 
