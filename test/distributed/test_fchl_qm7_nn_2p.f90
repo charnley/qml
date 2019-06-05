@@ -145,7 +145,7 @@ program test_fchl_gatherv_kernel
         call fread_fchl_collection("jobname_dev/_fchl__b", collection_y, nm2, max_size, max_neighbors)
 
         ! Allocate and read properties
-        call fread_2d_double("jobname_dev/_properties", nm1, 1, properties(:,:1))
+        call fread_2d_double("jobname_dev/_properties", nm1, 1, properties(:,1:1))
         call fread_2d_double("jobname_dev/_properties", nm1, 1, properties(:,2:2))
 
     endif ! rank 0
@@ -240,7 +240,7 @@ program test_fchl_gatherv_kernel
 
 
     ! TODO Return alphas
-    call DGSUM2D(context, "All", "1-tree", na, 1, alphas, 1, -1, -1)
+    call DGSUM2D(context, "All", "1-tree", nm1, n_properties, alphas, 1, -1, -1)
 
     ! Save alphas to file
     if (local_id .eq. 0) then
