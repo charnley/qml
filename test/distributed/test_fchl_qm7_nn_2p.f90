@@ -218,7 +218,8 @@ program test_fchl_gatherv_kernel
     do local_j = 1, local_B_cols
         do local_i = 1, local_B_rows
             call l2g(local_i, local_rank_row, ranks_rows, block_size, global_i)
-            local_B(local_i, local_j) = properties(global_i, local_j)
+            call l2g(local_j, local_rank_col, ranks_cols, block_size, global_j)
+            local_B(local_i, local_j) = properties(global_i, global_j)
         enddo
     enddo
 
@@ -244,7 +245,7 @@ program test_fchl_gatherv_kernel
 
     ! Save alphas to file
     if (local_id .eq. 0) then
-        open(unit = 9, file = "log/test_qm7_nn_2p_alpha", form="formatted")
+        open(unit = 9, file = "jobname_dev/test_qm7_nn_2p_alpha", form="formatted")
         call print_matrix(alphas, n_properties, nm1, 9)
         close(9)
     end if
